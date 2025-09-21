@@ -12,6 +12,7 @@ interface IOrderItem extends IModelBase {
   discount?: number;
   finalPrice?: number;
   total?: number;
+  productId?: number | null;
 }
 
 const model = {
@@ -28,6 +29,14 @@ const model = {
     allowNull: false,
     references: {
       model: Order,
+      key: 'id',
+    },
+  },
+  productId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: Products,
       key: 'id',
     },
   },
