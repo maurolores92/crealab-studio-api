@@ -91,8 +91,11 @@ class ProductsService extends CrudService<IProducts> {
   public all = async(paginateRequest?: any): Promise<any> => {
     const query: any = {};
     if(paginateRequest) {
+      if(paginateRequest.name && paginateRequest.name !== '') {
+        query.name = { [Op.like]: `%${paginateRequest.name}%` };
+      }
       if(paginateRequest.sku && paginateRequest.sku !== '') {
-        query.sku = paginateRequest.sku;
+        query.sku = { [Op.like]: `%${paginateRequest.sku}%` };
       }
       if(paginateRequest.categories && paginateRequest.categories.length) {
         const products = await ProductCategory.findAll({where: {categoryId: {[Op.in]: paginateRequest.categories}}, attributes: ['productId']});

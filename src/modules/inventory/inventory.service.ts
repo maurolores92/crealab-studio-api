@@ -2,6 +2,7 @@
 import { CrudService } from '@src/core/helpers';
 import { inventoryHistoryService } from './history/inventoryHistory.service';
 import { IInventory, Inventory } from './inventory.model';
+import { Op } from 'sequelize';
 
 class InventoryService extends CrudService<IInventory> {
   constructor() {
@@ -53,7 +54,7 @@ class InventoryService extends CrudService<IInventory> {
     const query: any = {};
     if(paginateRequest) {
       if(paginateRequest.name && paginateRequest.name !== '') {
-        query.name = paginateRequest.name;
+        query.name = { [Op.like]: `%${paginateRequest.name}%` };
       }
     }
     return await this.paginate(paginateRequest, {
