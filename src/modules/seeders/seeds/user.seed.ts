@@ -10,7 +10,7 @@ class UserSeed extends AbstractSeed<IUser> {
       name: 'Super', 
       lastName: 'admin', 
       username: 'superadmin',
-      email: 'superadmin@crealab.ar',
+      email: 'superadmin@crealabstudio.com.ar',
       newPassword: 'crealab2025',
       roleId: 1,
     },

@@ -4,28 +4,28 @@ import { Category, ICategory } from "@src/modules/products/categories/category.m
 class CategorySeed extends AbstractSeed<ICategory> {
   protected data: any[] = [
     {
-      name: 'Remera',
-      slug: 'remera',
+      name: 'Llaveros',
+      slug: 'llaveros',
       status: 'active',
     },
     {
-      name: 'Pantalón',
-      slug: 'pantalon',
+      name: 'Juguetes',
+      slug: 'juguetes',
       status: 'active',
     },
     {
-      name: 'Buzo',
-      slug: 'buzo',
+      name: 'Imanes',
+      slug: 'imanes',
       status: 'active',
     },
     {
-      name: 'Campera',
-      slug: 'campera',
+      name: 'Pins',
+      slug: 'pins',
       status: 'active',
     },
     {
-      name: 'Pijama',
-      slug: 'pijama',
+      name: 'Personajes',
+      slug: 'personajes',
       status: 'active',
     },
   ];
