@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Orden #<%= orderId %></title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .header { display: flex; justify-content: space-between; }
+    .cliente { margin-bottom: 20px; }
+    .cliente p { margin: 2px 0; }
+    .estado { background-color: #ffe4b2; padding: 5px 10px; border-radius: 5px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .total { text-align: right; margin-top: 20px; font-size: 18px; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Orden #<%= orderId %></h1>
+    <div>
+      <p><strong>Fecha:</strong> <%= orderDate %></p>
+    </div>
+  </div>
+
+  <div class="cliente">
+    <h2>Cliente</h2>
+    <p><strong>Nombre:</strong> <%= client.name %></p>
+    <p><strong>Empresa:</strong> <%= client.company %></p>
+    <p><strong>Email:</strong> <%= client.email %></p>
+    <p><strong>Teléfono:</strong> <%= client.phone %></p>
+    <p><strong><%= client.documentType %>:</strong> <%= client.document %></p>
+    <p><strong>Dirección:</strong> <%= client.address %></p>
+  </div>
+
+  <h2>Productos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Producto</th>
+        <th>SKU</th>
+        <th>Talle</th>
+        <th>Color</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% products.forEach(product => { %>
+        <tr>
+          <td><%= product.id %></td>
+          <td><%= product.name %></td>
+          <td><%= product.sku %></td>
+          <td><%= product.size %></td>
+          <td><%= product.color %></td>
+          <td>$<%= product.price %></td>
+          <td><%= product.quantity %></td>
+          <td>$<%= product.total %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <div class="total">
+    <strong>Total de la Orden: $<%= total %></strong>
+  </div>
+
+</body>
+</html>

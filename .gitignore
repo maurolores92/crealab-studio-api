@@ -1,0 +1,12 @@
+build/
+node_modules
+.env
+.DS_Store
+coverage
+public/products/
+public/categories/
+public/users/
+public/invoices/
+public/storage/*
+.wwebjs_auth
+.wwebjs_cache

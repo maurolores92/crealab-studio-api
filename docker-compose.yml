@@ -1,0 +1,23 @@
+#version: '3.3'
+services:
+  apicrealab:
+    image: apicrealab
+    container_name: apicrealab
+    build: ./
+    restart: always
+    env_file: ./.env
+    ports:
+      - 6020:5002
+    stdin_open: true
+    tty: true
+    networks:
+      - crealab
+    volumes:
+      - /home/crealab/projects/storage:/home/node/app/public/storage
+
+#Docker Networks
+networks:
+  crealab:
+    external: true
+      
+ 
