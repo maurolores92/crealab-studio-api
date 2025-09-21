@@ -45,14 +45,14 @@ const model = {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  roleId: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    references: {
-      model: Role,
-      key: 'id',
+    roleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: Role,
+        key: 'id',
+      },
     },
-  },
 };
 
 const User: ModelStatic<IUser> = sequelize.define<IUser>(
