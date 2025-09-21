@@ -84,7 +84,7 @@ class ProductsService extends CrudService<IProducts> {
         },
         {model: ProductGallery, as: 'gallery'},
       ],
-      order: [['createdAt', 'desc']],
+      order: [['name', 'asc']],
     });
   }
 
@@ -123,7 +123,7 @@ class ProductsService extends CrudService<IProducts> {
         },
         {model: ProductStatus, as: 'status', attributes: ['id', 'name']},
       ],
-      order: [['createdAt', 'desc']],
+      order: [['name', 'asc']],
     });
   };
 
