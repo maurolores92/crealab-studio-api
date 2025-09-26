@@ -5,6 +5,8 @@ import { OrderItem } from '../orders/items/orderItem.model';
 import { Products } from '../products/products.model';
 import { Client } from '../clients/client.model';
 import { Inventory } from '../inventory/inventory.model';
+import { OrderHistory } from '../orders/history/orderHistory.model';
+import { User } from '../users/users.model';
 import { Op, QueryTypes } from 'sequelize';
 import { sequelize } from '@src/core/configurations';
 
@@ -258,7 +260,7 @@ class DashboardsService {
     };
   }
 
-  public async getPopularProducts(limit: number = 6): Promise<{
+  public async getPopularProducts(limit: number = 4): Promise<{
     products: Array<{
       id: number;
       name: string;
@@ -271,16 +273,13 @@ class DashboardsService {
     totalVisitors: number;
   }> {
     try {
-      console.log('Starting getPopularProducts...');
       
       const paidStatus = await OrderStatus.findOne({ where: { slug: 'paid' } });
       if (!paidStatus) {
         console.log('No paid status found');
         return { products: [], totalVisitors: 0 };
       }
-      console.log('Paid status found:', paidStatus.id);
 
-      // Simple approach: get all paid orders with their items
       const paidOrders = await Order.findAll({
         where: { orderStatusId: paidStatus.id },
         include: [{
@@ -289,12 +288,9 @@ class DashboardsService {
           where: { productId: { [Op.ne]: null } },
           required: false
         }],
-        limit: 100 // Limit orders to avoid performance issues
+        limit: 100
       });
 
-      console.log('Paid orders found:', paidOrders.length);
-
-      // Aggregate products manually
       const productStats: { [key: number]: { totalSold: number, totalRevenue: number } } = {};
 
       paidOrders.forEach(order => {
@@ -311,16 +307,10 @@ class DashboardsService {
         }
       });
 
-      console.log('Product stats:', productStats);
-
-      // Sort by totalSold and get top products
       const sortedProducts = Object.entries(productStats)
         .sort(([, a], [, b]) => b.totalSold - a.totalSold)
         .slice(0, limit);
 
-      console.log('Sorted products (top):', sortedProducts);
-
-      // Get product details
       const productsWithDetails = await Promise.all(
         sortedProducts.map(async ([productId, stats]) => {
           const product = await Products.findByPk(parseInt(productId), {
@@ -347,9 +337,6 @@ class DashboardsService {
       const validProducts = productsWithDetails.filter((p): p is NonNullable<typeof p> => p !== null);
       const totalVisitors = validProducts.reduce((acc: number, product) => acc + product.totalSold, 0);
 
-      console.log('Final valid products:', validProducts);
-      console.log('Total visitors:', totalVisitors);
-
       return {
         products: validProducts,
         totalVisitors
@@ -357,6 +344,83 @@ class DashboardsService {
     } catch (error) {
       console.error('Error in getPopularProducts:', error);
       return { products: [], totalVisitors: 0 };
+    }
+  }
+
+  public async getRecentPaidOrders(limit: number = 5): Promise<Array<{
+    id: number;
+    orderNumber: string;
+    clientName: string;
+    clientEmail: string;
+    totalAmount: number;
+    paidDate: string;
+    changedBy: string;
+  }>> {
+    try {
+      const paidStatus = await OrderStatus.findOne({ where: { slug: 'paid' } });
+      if (!paidStatus) {
+        console.log('No paid status found');
+        return [];
+      }
+
+      // Buscar historial de cambios a estado "paid" en los últimos 30 días
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const paidHistoryEntries = await OrderHistory.findAll({
+        where: {
+          title: { [Op.like]: `%${paidStatus.name}%` },
+          createdAt: { [Op.gte]: thirtyDaysAgo }
+        },
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'name', 'lastName']
+          }
+        ],
+        order: [['createdAt', 'desc']],
+        limit: limit * 2 // Traemos más para filtrar después
+      });
+
+      // Obtener las órdenes correspondientes
+      const orderIds = paidHistoryEntries.map(entry => entry.orderId);
+      
+      const orders = await Order.findAll({
+        where: { 
+          id: { [Op.in]: orderIds },
+          orderStatusId: paidStatus.id // Confirmar que siguen siendo pagadas
+        },
+        include: [
+          {
+            model: Client,
+            as: 'client',
+            attributes: ['id', 'name', 'lastName', 'email']
+          }
+        ],
+        limit
+      });
+
+      // Mapear las órdenes con la información del historial
+      const result = orders.map(order => {
+        const historyEntry = paidHistoryEntries.find(h => h.orderId === order.id);
+        const user = historyEntry?.user;
+        
+        return {
+          id: order.id,
+          orderNumber: `#${order.id}`,
+          clientName: `${order.client?.name || ''} ${order.client?.lastName || ''}`.trim(),
+          clientEmail: order.client?.email || '',
+          totalAmount: Number(order.totalAmount) || 0,
+          paidDate: historyEntry?.createdAt?.toISOString() || order.updateAt?.toISOString() || '',
+          changedBy: user ? `${user.name} ${user.lastName}`.trim() : 'Sistema'
+        };
+      });
+
+      return result;
+    } catch (error) {
+      console.error('Error in getRecentPaidOrders:', error);
+      return [];
     }
   }
 }

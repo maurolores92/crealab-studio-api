@@ -21,6 +21,7 @@ class DashboardsRouter {
         this.router.get('/open-orders-stats', dashboardsController.getOpenOrdersStats);
         this.router.get('/earning-reports', dashboardsController.getEarningReports);
         this.router.get('/popular-products', dashboardsController.getPopularProducts);
+        this.router.get('/recent-paid-orders', dashboardsController.getRecentPaidOrders);
     };
 
     private initRoutes(middleware: any[]) {

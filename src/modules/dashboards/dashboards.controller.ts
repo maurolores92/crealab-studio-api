@@ -67,6 +67,16 @@ class DashboardsController {
             next(error);
         }
     }
+
+    public getRecentPaidOrders = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const limit = req.query.limit ? Number(req.query.limit) : 5;
+            const recentPaidOrders = await dashboardsService.getRecentPaidOrders(limit);
+            res.json(recentPaidOrders);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export const dashboardsController = new DashboardsController();
