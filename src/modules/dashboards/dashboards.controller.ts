@@ -48,6 +48,25 @@ class DashboardsController {
                 next(error);
             }
         }
+
+    public getEarningReports = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const earningReports = await dashboardsService.getEarningReports();
+            res.json(earningReports);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public getPopularProducts = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const limit = req.query.limit ? Number(req.query.limit) : 6;
+            const popularProducts = await dashboardsService.getPopularProducts(limit);
+            res.json(popularProducts);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export const dashboardsController = new DashboardsController();
