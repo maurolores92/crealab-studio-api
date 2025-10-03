@@ -7,6 +7,11 @@ class WoocommerceController {
 		const results = await woocommerceService.syncAllProducts();
 		res.json({ success: true, results });
 	}
+
+	async syncAllCategories(req: Request, res: Response) {
+		const results = await woocommerceService.syncAllCategories();
+		res.json({ success: true, results });
+	}
 }
 
 export const woocommerceController = new WoocommerceController();

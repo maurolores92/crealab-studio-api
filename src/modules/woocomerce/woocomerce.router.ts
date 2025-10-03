@@ -14,7 +14,8 @@ class WoocommerceRouter {
     }
 
     private prepareRouters = () => {
-        this.router.post('/sync-all', woocommerceController.syncAllProducts);
+        this.router.post('/sync-products', woocommerceController.syncAllProducts);
+        this.router.post('/sync-categories', woocommerceController.syncAllCategories);
     };
 
     private initRoutes(middleware: any[]) {
