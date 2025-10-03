@@ -1,12 +1,14 @@
 import wordpressConnector from '@src/core/connectors/wordpress/wordpress.connector';
 import { Products } from '@src/modules/products/products.model';
 import { Category } from '../products/categories/category.model';
+import { ProductCategory } from '../products/poductCategory.model';
 
 class WoocommerceService {
 
-
 	async syncAllProducts() {
-		const products = await Products.findAll();
+		const products = await Products.findAll({
+			include: [ { model: ProductCategory, as: 'categories', include: ['category'] } ]
+		});
 		const results = [];
 		const baseUrl = process.env.BASE_IMAGE_URL;
 		const makeAbsoluteUrl = (url: string) => url.startsWith('http') ? url : `${baseUrl}${url}`;
@@ -25,10 +27,8 @@ class WoocommerceService {
 				if (producto.imageUrl) {
 					const imageUrl = makeAbsoluteUrl(producto.imageUrl);
 					const fileName = producto.imageUrl.split('/').pop() || 'product.jpg';
-					console.log(`[SYNC IMG] Intentando subir imagen:`, imageUrl, 'como', fileName);
 					try {
 						const uploaded = await wordpressConnector.uploadImage(imageUrl, fileName);
-						console.log(`[SYNC IMG] Imagen subida correctamente:`, uploaded);
 						images = [{ id: uploaded.id }];
 					} catch (imgErr) {
 						console.error('[SYNC IMG] Error subiendo imagen a WordPress:', imgErr?.response?.data || imgErr);
@@ -38,7 +38,9 @@ class WoocommerceService {
 				let categories: { id: number }[] = [];
 				if (producto.categories && Array.isArray(producto.categories)) {
 					categories = producto.categories
-						.map((cat: any) => {
+						.map((rel: any) => {
+							const cat = rel.category;
+							if (!cat) return null;
 							const wooCat = wooCategories.find((wcat: any) => wcat.slug === cat.slug);
 							return wooCat ? { id: wooCat.id } : null;
 						})

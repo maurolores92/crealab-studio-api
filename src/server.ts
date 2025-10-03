@@ -78,7 +78,7 @@ export class Server {
 
   public async start(port: number): Promise<void> {
     const force = false;
-    await sequelize.sync({ force, alter: true })
+    await sequelize.sync({ force, alter: false })
    
     console.log('Database forced:', force);
     if(force) {
