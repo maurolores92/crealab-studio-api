@@ -1,4 +1,5 @@
 
+
 import { wordpress } from "@src/core/configurations/wordpress";
 import { ApiConnector } from "../api.connector";
 
@@ -27,6 +28,10 @@ class WordpressConnector extends ApiConnector {
 
   createCategory = async (data: any) => {
     return this.client.post<any>('/products/categories', data, { auth: this.auth }).then(res => res.data);
+  }
+
+  updateProduct = async (id: number, data: any) => {
+    return this.client.put<any>(`/products/${id}`, data, { auth: this.auth }).then(res => res.data);
   }
 
   uploadImage = async (imageUrl: string, fileName: string) => {

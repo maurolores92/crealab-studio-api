@@ -8,7 +8,7 @@ class WoocommerceService {
 	async syncAllProducts() {
 		const products = await Products.findAll();
 		const results = [];
-		const baseUrl = process.env.BASE_IMAGE_URL || 'https://crealabstudio.com.ar';
+		const baseUrl = process.env.BASE_IMAGE_URL;
 		const makeAbsoluteUrl = (url: string) => url.startsWith('http') ? url : `${baseUrl}${url}`;
 		const cleanText = (txt: any) => (txt === null || txt === undefined || txt === 'null') ? '' : String(txt);
 
@@ -57,8 +57,22 @@ class WoocommerceService {
 					status: 'publish',
 				};
 
-				const result = await wordpressConnector.createProduct(wooProduct);
-				results.push({ id: producto.id, success: true, wooId: result.id });
+				// Buscar producto por SKU en WooCommerce
+				let existing = null;
+				if (wooProduct.sku) {
+					const found = await wordpressConnector.getProducts({ sku: wooProduct.sku });
+					existing = found && found.length > 0 ? found[0] : null;
+				}
+
+				if (existing) {
+					// Actualizar producto existente
+					const updated = await wordpressConnector.updateProduct(existing.id, wooProduct);
+					results.push({ id: producto.id, success: true, wooId: updated.id, updated: true });
+				} else {
+					// Crear producto nuevo
+					const result = await wordpressConnector.createProduct(wooProduct);
+					results.push({ id: producto.id, success: true, wooId: result.id, created: true });
+				}
 			} catch (error) {
 				if (error?.response) {
 					console.error('Error WooCommerce:', error.response.data);
