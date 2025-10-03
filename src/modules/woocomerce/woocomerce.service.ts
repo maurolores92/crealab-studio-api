@@ -21,12 +21,17 @@ class WoocommerceService {
 					continue;
 				}
 
-				let images: { src: string }[] = [];
+				let images: { id: number }[] = [];
 				if (producto.imageUrl) {
-					if (Array.isArray(producto.imageUrl)) {
-						images = producto.imageUrl.map((url: string) => ({ src: makeAbsoluteUrl(url) }));
-					} else {
-						images = [{ src: makeAbsoluteUrl(producto.imageUrl) }];
+					const imageUrl = makeAbsoluteUrl(producto.imageUrl);
+					const fileName = producto.imageUrl.split('/').pop() || 'product.jpg';
+					console.log(`[SYNC IMG] Intentando subir imagen:`, imageUrl, 'como', fileName);
+					try {
+						const uploaded = await wordpressConnector.uploadImage(imageUrl, fileName);
+						console.log(`[SYNC IMG] Imagen subida correctamente:`, uploaded);
+						images = [{ id: uploaded.id }];
+					} catch (imgErr) {
+						console.error('[SYNC IMG] Error subiendo imagen a WordPress:', imgErr?.response?.data || imgErr);
 					}
 				}
 
