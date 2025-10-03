@@ -11,6 +11,9 @@ class WoocommerceService {
 		const baseUrl = process.env.BASE_IMAGE_URL || 'https://crealabstudio.com.ar';
 		const makeAbsoluteUrl = (url: string) => url.startsWith('http') ? url : `${baseUrl}${url}`;
 		const cleanText = (txt: any) => (txt === null || txt === undefined || txt === 'null') ? '' : String(txt);
+
+		const wooCategories = await wordpressConnector.getCategories({ per_page: 100 });
+
 		for (const producto of products) {
 			try {
 				if (!producto.name || !producto.price) {
@@ -29,7 +32,12 @@ class WoocommerceService {
 
 				let categories: { id: number }[] = [];
 				if (producto.categories && Array.isArray(producto.categories)) {
-					categories = producto.categories.map((cat: any) => ({ id: cat.wooId || cat.id }));
+					categories = producto.categories
+						.map((cat: any) => {
+							const wooCat = wooCategories.find((wcat: any) => wcat.slug === cat.slug);
+							return wooCat ? { id: wooCat.id } : null;
+						})
+						.filter(Boolean);
 				}
 				const wooProduct = {
 					name: producto.name,
