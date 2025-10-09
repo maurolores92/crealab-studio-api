@@ -1,39 +1,53 @@
-import { CrudController } from '@src/core/helpers';
-import { ICategory } from './category.model';
+
 import { categoryService } from './category.service';
 import { NextFunction, Response } from 'express';
 
-class CategoryController extends CrudController<ICategory> {
-  constructor() {
-    super(categoryService, 'Category-controller');
-  }
-  public all = async(req: any, res: Response, next: NextFunction): Promise<void> => {
+class CategoryController {
+  // Listar categorías desde WooCommerce
+  public all = async (req: any, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { pageSize, page, search } = req.query;
+      const { pageSize, page } = req.query;
       const paginateRequest = { pageSize: Number(pageSize), page: Number(page) };
-      const clients = await categoryService.getAll(paginateRequest);
-      res.status(200).json(clients);
+      const result = await categoryService.getAll(paginateRequest);
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  public actives = async(req: any, res: Response, next: NextFunction): Promise<void> => {
+  // Crear categoría en WooCommerce
+  public create = async (req: any, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const categories = await categoryService.actives();
-      res.status(200).json(categories);
+      const data = req.body;
+      const created = await categoryService.create(data);
+      res.status(201).json(created);
     } catch (error) {
       next(error);
     }
-  }
-   public activesWithProducts = async(req: any, res: Response, next: NextFunction): Promise<void> => {
+  };
+
+  // Editar categoría en WooCommerce
+  public update = async (req: any, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const categories = await categoryService.getAllWithProducts();
-      res.status(200).json(categories);
+      const id = Number(req.params.id);
+      const data = req.body;
+      const updated = await categoryService.update(id, data);
+      res.status(200).json(updated);
     } catch (error) {
       next(error);
     }
-  }
+  };
+
+  // Eliminar categoría en WooCommerce
+  public remove = async (req: any, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = Number(req.params.id);
+      const deleted = await categoryService.remove(id);
+      res.status(200).json(deleted);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export const categoryController = new CategoryController();

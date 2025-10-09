@@ -6,7 +6,6 @@ import roleSeed from "./seeds/role.seed";
 import userSeed from "./seeds/user.seed";
 import orderStatusSeed from "./seeds/orderStatus.seed";
 import productStatusSeed from "./seeds/productStatus.seed";
-import categorySeed from "./seeds/category.seed";
 import provinceSeed from "./seeds/province.seed";
 import paymentMethodSeed from "./seeds/paymentMethod.seed";
 
@@ -14,7 +13,6 @@ class SeedersService {
 
   private models: {[key:string]: ISeed} = {
     'role': roleSeed,
-    'category': categorySeed,
     'user': userSeed,
     'orderStatus': orderStatusSeed,
     'productStatus': productStatusSeed,

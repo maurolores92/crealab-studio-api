@@ -2,7 +2,6 @@ import { DataTypes, ModelStatic } from 'sequelize';
 import { sequelize } from '@src/core/configurations';
 import { IModelBase, configDatabase } from '@src/core/helpers/database/base.model';
 import { Order } from '../order.model';
-import { Products } from '@src/modules/products/products.model';
 
 interface IOrderItem extends IModelBase {
   orderId: number;
@@ -12,7 +11,7 @@ interface IOrderItem extends IModelBase {
   discount?: number;
   finalPrice?: number;
   total?: number;
-  productId?: number | null;
+  productId?: number | null; // id de producto de WooCommerce
 }
 
 const model = {
@@ -35,10 +34,6 @@ const model = {
   productId: {
     type: DataTypes.INTEGER,
     allowNull: true,
-    references: {
-      model: Products,
-      key: 'id',
-    },
   },
   quantity: {
     type: DataTypes.INTEGER,
@@ -65,7 +60,6 @@ const OrderItem: ModelStatic<IOrderItem> = sequelize.define<IOrderItem>(
 );
 
 OrderItem.belongsTo(Order, {as: 'order', foreignKey: 'orderId'});
-
 Order.hasMany(OrderItem, {as: 'items'});
 
 export { OrderItem, IOrderItem };

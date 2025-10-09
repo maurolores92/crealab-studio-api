@@ -1,15 +1,12 @@
 import { Op } from "sequelize";
-import { Category } from "../products/categories/category.model";
+
 import { IProducts, Products } from "../products/products.model";
 
 class SearchService {
 
   public search = async(text: string): Promise<{products: any[], categories: any[]}> => {
     
-    const categories = await Category.findAll({
-      where: {name: {[Op.like]: `%${text}%`,}},
-      attributes: ['name', 'slug']
-    })
+  const categories: any[] = []; // TODO: Implementar búsqueda de categorías en WooCommerce/WordPress
     const products = await Products.findAll({
       where: {name: {[Op.like]: `%${text}%`}},
       attributes: ['name', 'sku']

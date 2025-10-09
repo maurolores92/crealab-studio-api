@@ -1,18 +1,14 @@
-import { CrudRouter } from '@src/core/helpers/database/crud.router';
-import Context from '@src/core/middleware/context';
-import { ICategory } from './category.model';
+import { Router } from 'express';
 import { categoryController } from './category.controller';
 
-class CategoryRouter extends CrudRouter<ICategory> {
-  constructor() {
-    super('/categories', categoryController);
-    this.customRouter();
-    this.initRoutes([Context.create]);
-  }
-  public customRouter() {
-    this.router.get('/actives', [], categoryController.actives);
-    this.router.get('/actives-products', [], categoryController.activesWithProducts);
-  }
-}
+const router = Router();
 
-export const categoryRouter = new CategoryRouter();
+router.get('/', categoryController.all);
+router.post('/', categoryController.create);
+router.put('/:id', categoryController.update);
+router.delete('/:id', categoryController.remove);
+
+export const categoryRouter = {
+	basePath: '/categories',
+	router
+};

@@ -1,106 +1,73 @@
-import { CrudController } from '@src/core/helpers';
-import { IProducts } from './products.model';
+import { Request } from 'express';
 import { productsService } from './products.service';
 import { Response, NextFunction } from 'express';
-import { productExcelService } from './productExcel.service';
-import { excelService } from '@src/core/helpers/filestore/excel.service';
-import { ApiResponse } from '@src/core/interfaces';
 
-class ProductsController extends CrudController<IProducts> {
-  constructor() {
-    super(productsService, 'products-controller');
-  }
+class ProductsController  {
 
-  public bySku = async(req: any, res: Response, next: NextFunction): Promise<void> => {
+  public uploadProductGalleryImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const result = await productsService.bySku(req.params.sku, req.user);
-      const apiResponse: ApiResponse<any> = {
-              statusCode: 200,
-              statusMessage: 'Success',
-              data: result,
-            };
-      res.status(200).json(apiResponse);
+      const productId = Number(req.params.id);
+      if (!req.files || !req.files.image) throw new Error('No file uploaded');
+      const file = Array.isArray(req.files.image) ? req.files.image[0] : req.files.image;
+      const product = await productsService.uploadAndAddProductGalleryImage(productId, file);
+      res.status(200).json({ statusCode: 200, statusMessage: 'Gallery image uploaded', data: product });
     } catch (error) {
       next(error);
     }
   };
-  public similars = async (req: any, res: Response, next: NextFunction): Promise<void> => {
+
+  public async createWpProduct(req: any, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await productsService.similars(req.params.id, req.user);
-      res.status(200).json(result);
-    } catch (error) {
-      next(error);
-    }
-  };
-  public create = async (req: any, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const files = req.files;
-      const result = await productsService.createProduct(req.body, files);
-      res.status(200).json(result);
-    } catch (error) {
-      next(error);
-    }
-  };
-  public addGallery = async(req: any, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const files = req.files;
-      const result = await productsService.addGallery(req.body, files);
-      res.status(200).json(result);
+      const result = await productsService.createWpProduct(req.body);
+      res.status(201).json({ statusCode: 201, statusMessage: 'Created', id: result?.id, data: result });
     } catch (error) {
       next(error);
     }
   }
 
-  public importExcel = async(req: any, res: Response, next: NextFunction): Promise<void> => {
+  public getAllFromWordpress = async (req: any, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const { file } = req.files;
-      const result = await productExcelService.importExcel(file);
-      res.status(200).json(result);
+      const products = await productsService.getAllFromWordpress(req.query);
+      res.status(200).json({ statusCode: 200, statusMessage: 'Success', data: products });
     } catch (error) {
       next(error);
     }
   };
 
-  public exportExcel = async(req: any, res: Response, next: NextFunction): Promise<void> => {
+  public updateWpProduct = async (req: any, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const result = await productExcelService.exportExcel();
-      excelService.toResponse(res, `${result.fileName}.xlsx`);
+      const result = await productsService.updateWpProduct(Number(req.params.id), req.body);
+      res.status(200).json({ statusCode: 200, statusMessage: 'Updated', data: result });
     } catch (error) {
       next(error);
     }
   };
 
-  public actived = async(req: any, res: Response, next: NextFunction): Promise<void> => {
+  public deleteFromWordpress = async (req: any, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const products = await productsService.actived(req.query, req.user);
-      res.status(200).json(products);
-    } catch (error) {
-      next(error);
-    }
-  };
-  public uploadMainImage = async(req: any, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      
-      const products = await productsService.uploadMainImage(req.params.id,  req.files);
-      res.status(200).json(products);
+      const result = await productsService.deleteFromWordpress(req.params.id);
+      res.status(200).json({ statusCode: 200, statusMessage: 'Deleted', data: result });
     } catch (error) {
       next(error);
     }
   };
 
-  public deleteMainImage = async(req: any, res: Response, next: NextFunction): Promise<void> => {
+  public getWpProductById = async (req: any, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const products = await productsService.deleteMainImage(req.params.id);
-      res.status(200).json(products);
+      const product = await productsService.getWpProductById(Number(req.params.id));
+      res.status(200).json({ statusCode: 200, statusMessage: 'Success', data: product });
     } catch (error) {
       next(error);
     }
   };
 
-  public deleteGalleryImage = async(req: any, res: Response, next: NextFunction): Promise<void> => {
+  public uploadProductImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const products = await productsService.deleteGalleryImage(req.params.id, req.params.galleryId);
-      res.status(200).json(products);
+      const productId = Number(req.params.id);
+      if (!req.files || !req.files.image) throw new Error('No file uploaded');
+      const file = Array.isArray(req.files.image) ? req.files.image[0] : req.files.image;
+      const product = await productsService.uploadAndSetProductImage(productId, file);
+      res.status(200).json({ statusCode: 200, statusMessage: 'Image uploaded and set', data: product });
     } catch (error) {
       next(error);
     }

@@ -5,15 +5,12 @@ import cors from 'cors';
 import expressFileUpload from 'express-fileupload';
 import { Server as HTTPServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
-
 import { errorResponseHandler } from '@src/core/middleware/error-handler.middleware';
 import apiRouter from './routes/apiRouter';
 import health from './routes/health';
 import { getWsOptions } from './core/configurations/websockets';
 import { sequelize } from './core/configurations';
-
 import seedersService from './modules/seeders/seeders.service';
-
 
 const CORS_SOCKET = {
   cors : { 
@@ -59,9 +56,8 @@ export class Server {
     this.app.get('*', (req, res) => {
       res.sendFile(path.resolve('./') + '/public/index.html');
     });
-    
+  
     this.app.use(errorResponseHandler);
-
   }
 
   public initSocket = (): void => {

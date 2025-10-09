@@ -10,7 +10,7 @@ import { inventoryRouter } from '@src/modules/inventory/inventory.router';
 import { expensesRouter } from '@src/modules/expenses/expenses.router';
 import { dashboardsRouter } from '@src/modules/dashboards/dashboards.router';
 import { withdrawalRouter } from '@src/modules/withdrawal/withdrawal.router';
-import { woocommerceRouter } from '@src/modules/woocomerce/woocomerce.router';
+import { wordpressRouter } from '@src/modules/wordpress/wordpress.router';
 
 const routes = [
   seedersRouter,
@@ -24,7 +24,7 @@ const routes = [
   expensesRouter,
   dashboardsRouter,
   withdrawalRouter,
-  woocommerceRouter
+  wordpressRouter
 ];
 
 const router = Router();

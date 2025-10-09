@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import Context from '@src/core/middleware/context';
 import { apiTokenValidation } from '@src/core/middleware';
-import { woocommerceController } from './woocomerce.controller';
+import { wordpressController } from './wordpress.controller';
 
-class WoocommerceRouter {
-    public basePath = '/woocomerce';
+class WordpressRouter {
+    public basePath = '/wordpress';
     public router: Router;
 
     constructor() {
@@ -14,8 +14,9 @@ class WoocommerceRouter {
     }
 
     private prepareRouters = () => {
-        this.router.post('/sync-products', woocommerceController.syncAllProducts);
-        this.router.post('/sync-categories', woocommerceController.syncAllCategories);
+    this.router.get('/products', wordpressController.getProducts);
+    this.router.get('/products', wordpressController.getProducts);
+    this.router.post('/product-categories', wordpressController.createProductCategory);
     };
 
     private initRoutes(middleware: any[]) {
@@ -23,4 +24,4 @@ class WoocommerceRouter {
     }
 }
 
-export const woocommerceRouter = new WoocommerceRouter();
+export const wordpressRouter = new WordpressRouter();

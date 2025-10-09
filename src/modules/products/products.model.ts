@@ -6,7 +6,6 @@ import { StockDistribution } from './stock/stockDistribution.model';
 import { ProductHistory } from './history/productHistory.model';
 import { User } from '../users/users.model';
 import { ProductGallery } from './gallery/productGallery.model';
-import { ICategory } from './categories/category.model';
 import { ProductInventory } from './inventory/productInventory.model';
 
 export interface IProducts extends IModelBase {
@@ -25,7 +24,7 @@ export interface IProducts extends IModelBase {
   productStatusId: number;
   imageUrl: string;
   userId?: number;
-  categories?: ICategory[]
+  categories?: any[]
   status?: IProductStatus;
 }
 
