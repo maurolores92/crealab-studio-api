@@ -129,5 +129,11 @@ class WordpressConnector extends ApiConnector {
       headers: { Authorization: `Bearer ${token}` }
     }).then(res => res.data);
   }
+
+  public async removeProductImage(productId: number, imageId: number) {
+  const product = await this.getProductById(productId);
+  const newImages = (product.images || []).filter((img: any) => img.id !== imageId);
+  return this.client.put<any>(`/products/${productId}`, { images: newImages }, { auth: this.auth }).then(res => res.data);
+}
 }
 export default new WordpressConnector();

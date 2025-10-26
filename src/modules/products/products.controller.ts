@@ -4,6 +4,17 @@ import { Response, NextFunction } from 'express';
 
 class ProductsController  {
 
+  public async removeProductImage(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const productId = Number(req.params.id);
+      const imageId = Number(req.params.imageId);
+      const result = await productsService.removeProductImage(productId, imageId);
+      res.status(200).json({ statusCode: 200, statusMessage: 'Product image removed', data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public uploadProductGalleryImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const productId = Number(req.params.id);

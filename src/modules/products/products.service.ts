@@ -4,6 +4,10 @@ import { wordpressService } from '../wordpress/wordpress.service';
 
 class ProductsService  {
 
+  public async removeProductImage(productId: number, imageId: number): Promise<any> {
+    return wordpressConnector.removeProductImage(productId, imageId);
+  }
+
   public async uploadAndAddProductGalleryImage(productId: number, file: any): Promise<any> {
     const filePath = file.tempFilePath || file.path;
     const fileName = file.name || file.originalname || (filePath ? path.basename(filePath) : undefined);

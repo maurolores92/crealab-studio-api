@@ -12,6 +12,7 @@ router.put('/:id', productsController.updateWpProduct);
 router.delete('/:id', productsController.deleteFromWordpress);
 router.post('/:id/image', productsController.uploadProductImage);
 router.post('/:id/gallery-image', productsController.uploadProductGalleryImage);
+router.delete('/:id/gallery/:imageId', productsController.removeProductImage);
 
 export const productsRouter = {
 	basePath: '/products',
