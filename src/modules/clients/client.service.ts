@@ -20,35 +20,6 @@ class ClientsService extends CrudService<IClient> {
     });
   }
 
-  protected verifyEmail = async (data: IClient): Promise<void> => {
-    if (!data.id) {
-      const where: any = {};
-      if(data.email && data.phone) {
-        where[Op.or] = [{ email: data.email }, { phone: data.phone }];
-      } else {
-        if (data.email) {
-          where.email = data.email;
-        }
-        if(data.phone) {
-          where.phone = data.phone;
-        }
-      }
-     
-      const verifyEmail = await Client.count({ where: { email: data.email} });
-      if (verifyEmail > 0) {
-        throw new Error('El cliente ya existe');
-      }
-    }
-  };
-
-  protected verifyDocument = async (data: IClient): Promise<void> => {
-    if (!data.id) {
-      const verifyDocument = await Client.count({ where: { document: data.document } });
-      if (verifyDocument > 0) {
-        throw new Error('El cliente con este número de documento ya existe');
-      }
-    }
-  };
 
   public all = async (paginateRequest?: any): Promise<any> => {
     return await this.paginate(paginateRequest, {
@@ -67,16 +38,15 @@ class ClientsService extends CrudService<IClient> {
   }
 
   public createClient = async (data: any, transaction?: Transaction): Promise<IClient> => {
-      
-      data.documentType = data.documentType ?? 'DNI';
-    
-      await Promise.all([this.verifyEmail(data), this.verifyDocument(data)]);
-      
+    data.documentType = data.documentType ?? 'DNI';
+
+    if (data.address && Object.values(data.address).some(v => v !== null && v !== '')) {
       const address = await addressService.create(data.address, transaction);
       data.addressId = address.id;
-      
-      const client = await Client.create(data, { transaction });
-      return client;
+    }
+
+    const client = await Client.create(data, { transaction });
+    return client;
   };
 
 

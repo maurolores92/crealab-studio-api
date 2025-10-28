@@ -18,7 +18,10 @@ class WordpressService {
 		if (data.summary !== undefined) mapped.short_description = data.summary;
 		if (data.price !== undefined) mapped.price = data.price !== null ? String(data.price) : '';
 		if (data.priceFinal !== undefined) mapped.regular_price = data.priceFinal !== null ? String(data.priceFinal) : '';
-		if (data.stock !== undefined) mapped.stock_quantity = data.stock !== null ? String(data.stock) : '';
+		if (data.stock !== undefined) {
+			mapped.stock_quantity = Number(data.stock);
+			mapped.manage_stock = true;
+			}
 		if (data.status !== undefined) mapped.status = data.status;
 		if (data.type !== undefined) mapped.type = data.type;
 		if (data.categories && Array.isArray(data.categories)) mapped.categories = data.categories.map((c: any) => ({ id: c.id }));
@@ -93,7 +96,10 @@ class WordpressService {
 		if (data.summary !== undefined) mapped.short_description = data.summary;
 		if (data.price !== undefined) mapped.price = data.price !== null ? String(data.price) : '';
 		if (data.priceFinal !== undefined) mapped.regular_price = data.priceFinal !== null ? String(data.priceFinal) : '';
-		if (data.stock !== undefined) mapped.stock_quantity = data.stock !== null ? String(data.stock) : '';
+		if (data.stock !== undefined) {
+			mapped.stock_quantity = Number(data.stock);
+			mapped.manage_stock = true;
+			}
 		if (data.status !== undefined) mapped.status = data.status;
 		if (data.type !== undefined) mapped.type = data.type;
 		if (data.categories && Array.isArray(data.categories)) mapped.categories = data.categories.map((c: any) => ({ id: c.id }));
