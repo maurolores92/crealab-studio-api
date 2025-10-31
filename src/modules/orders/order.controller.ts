@@ -81,6 +81,16 @@ class OrderController extends CrudController<IOrder> {
       next(error);
     }
   };
+
+  public remove = async (req: any, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const orderId = req.params.id;
+      await orderService.remove(orderId);
+      res.json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new OrderController();

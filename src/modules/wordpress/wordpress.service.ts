@@ -33,6 +33,30 @@ class WordpressService {
 		return wordpressConnector.postProduct(mapped);
 	}
 
+	async setProductStock(productId: number, stock: number) {
+		if (typeof stock !== 'number' || isNaN(stock)) {
+			throw new Error('El stock debe ser un número válido');
+		}
+		const payload = {
+			stock_quantity: Math.max(0, Math.floor(stock)),
+			manage_stock: true
+		};
+		return wordpressConnector.putProduct(productId, payload);
+	}
+
+	async adjustProductStock(productId: number, deltaStock: number) {
+		if (typeof deltaStock !== 'number' || isNaN(deltaStock)) {
+			throw new Error('La cantidad a ajustar debe ser un número válido');
+		}
+		const product = await this.getProductById(productId);
+		if (!product || typeof product.stock !== 'number') {
+			throw new Error('Producto no encontrado o sin stock numérico');
+		}
+		const newStock = product.stock + deltaStock;
+		return this.setProductStock(productId, newStock);
+	}
+
+
 	/**
 	 * Obtiene productos de WooCommerce (con mapeo de campos)
 	 */

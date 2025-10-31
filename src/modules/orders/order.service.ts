@@ -170,6 +170,11 @@ class OrderService extends CrudService<IOrder> {
       order: [['createdAt', 'desc']]
     });
   }
+
+  public remove = async (id: number): Promise<void> => {
+    await Order.destroy({ where: { id } });
+}
+
 }
 
 export default new OrderService();

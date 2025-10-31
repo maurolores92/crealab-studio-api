@@ -28,6 +28,7 @@ class OrderRouter extends CrudRouter<IOrder> {
     this.router.get('/:id/pdf', [], orderController.generateOrder);
     this.router.get('/byClient/:clientId', [apiTokenValidation, Context.create], orderController.byClient);
     this.router.put('/:id/markAsPaid', [apiTokenValidation, Context.create], orderController.markAsPaid);
+    this.router.delete('/:id', [apiTokenValidation, Context.create], orderController.remove);
   };
 
 }
